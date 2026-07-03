@@ -2,6 +2,7 @@ version: "2"
 services:
   openvpn:
     cap_add:
+      # Required for OpenVPN to create the tun/tap network interfaces for routing
       - NET_ADMIN
     image: kylemanna/openvpn
     container_name: openvpn
@@ -9,4 +10,6 @@ services:
       - "1194:1194/udp"
     restart: always
     volumes:
+      # Mounts the configuration folder containing the PKI, Certificates, and server.conf
+      # CRITICAL: Do not lose this directory, or you will lose your VPN keys!
       - ./openvpn-data/conf:/etc/openvpn

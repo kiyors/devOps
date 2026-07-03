@@ -1,15 +1,27 @@
+# ==============================================================================
+# Traefik Static Configuration
+# ==============================================================================
+
 api:
+  # Enables the web dashboard for monitoring routes (accessible on port 8080)
   dashboard: true
+  # Insecure mode allows accessing the dashboard without authentication for local dev
   insecure: true
 
 entryPoints:
+  # The primary HTTP entrypoint (Port 80)
   web:
     address: ":80"
+  
+  # The primary HTTPS entrypoint (Port 443)
   websecure:
     address: ":443"
 
 providers:
   docker:
+    # Allows Traefik to read container metadata via the Docker socket
     endpoint: "unix:///var/run/docker.sock"
+    # ONLY route containers that explicitly have the label: traefik.enable=true
     exposedByDefault: false
+    # The default network Traefik should use to route traffic to containers
     network: global_proxy_net

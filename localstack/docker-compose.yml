@@ -3,7 +3,9 @@ services:
     container_name: localstack-main
     image: localstack/localstack
     ports:
-      - "0.0.0.0:4566:4566" # LocalStack Gateway (Accessible from your Mac)
+      # Port 4566 is the primary gateway for ALL emulated AWS services (S3, Lambda, etc)
+      - "0.0.0.0:4566:4566" # LocalStack Gateway
+      # Ports 4510-4559 are used by LocalStack to expose external services dynamically
       - "0.0.0.0:4510-4559:4510-4559" # External services port range
 
       # for local
@@ -16,6 +18,7 @@ services:
       # to only your requested services to save RAM:
       - SERVICES=s3,iam,lambda,apigateway,ec2
     volumes:
+      # Persists your created buckets, databases, and configuration across restarts
       - "./volume:/var/lib/localstack"
       # Crucial: Allows LocalStack to spin up micro-containers for your Lambda executions
       - "/var/run/docker.sock:/var/run/docker.sock"

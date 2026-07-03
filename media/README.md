@@ -63,3 +63,11 @@ Jellyfin is configured to pass `/dev/dri` to the container. If you have an Intel
 | **Prowlarr**   | `9696`    | Indexer management            |
 | **Bazarr**     | `6767`    | Subtitle management           |
 | **Lidarr**     | `8686`    | Music automation              |
+
+---
+
+## 🛠️ Maintenance & Troubleshooting
+
+- **File Permissions**: If the *arr applications (Sonarr/Radarr) cannot move files downloaded by qBittorrent, you have a permissions issue. Ensure `PUID` and `PGID` in `.env` match the host user that owns the `/media` folder.
+- **Hardware Acceleration**: If video transcoding stutters, ensure the `/dev/dri` device exists on the host. You may need to install Intel media drivers (`intel-media-va-driver`) on the host system.
+- **Updating**: Run `just down && docker compose pull && just up` to pull the latest image versions from LinuxServer.io.

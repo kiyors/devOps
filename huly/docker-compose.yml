@@ -1,5 +1,8 @@
 name: huly-selfhost
 services:
+  # ==========================================
+  # HULY FRONTEND (Nginx Proxy)
+  # ==========================================
   nginx:
     image: "nginx:1.21.3"
     command: >
@@ -96,7 +99,11 @@ services:
       - "traefik.http.routers.huly.rule=Host(`${FRONT_DOMAIN:-huly.local}`)"
       - "traefik.http.services.huly.loadbalancer.server.port=80"
 
+  # ==========================================
+  # HULY DATABASES & BROKERS
+  # ==========================================
   cockroach:
+    # CockroachDB: A scalable, distributed SQL database used for primary storage
     image: cockroachdb/cockroach:latest-v24.2
     command: start-single-node --accept-sql-without-tls
     environment:
@@ -111,6 +118,7 @@ services:
       - huly_net
 
   redpanda:
+    # Redpanda: A high-performance Kafka alternative used for real-time event streaming and messaging
     image: docker.redpanda.com/redpandadata/redpanda:v24.3.6
     command:
       - redpanda
@@ -149,6 +157,7 @@ services:
       - huly_net
 
   minio:
+    # MinIO: S3-compatible object storage for file uploads, attachments, and avatars
     image: "minio/minio"
     command: server /data --address ":9000" --console-address ":9001"
     volumes:
@@ -162,6 +171,7 @@ services:
       - huly_net
 
   elastic:
+    # Elasticsearch: Used for full-text search across documents and tasks
     image: "elasticsearch:7.14.2"
     command: |
       /bin/sh -c "./bin/elasticsearch-plugin list | grep -q ingest-attachment || yes | ./bin/elasticsearch-plugin install --silent ingest-attachment;

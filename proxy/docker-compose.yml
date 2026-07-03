@@ -4,18 +4,24 @@ services:
     container_name: global-proxy
     restart: unless-stopped
     security_opt:
+      # Prevents the container from gaining additional privileges (security best practice)
       - no-new-privileges:true
     ports:
-      - "80:80"     # HTTP
-      - "443:443"   # HTTPS
-      - "8080:8080" # Traefik Dashboard (Optional/Dev only)
+      # Bind to host ports for inbound web traffic
+      - "80:80"     # HTTP traffic
+      - "443:443"   # HTTPS traffic
+      - "8080:8080" # Traefik Dashboard (Disable in production!)
     volumes:
+      # Read-only access to the Docker socket allows Traefik to auto-discover new containers
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      # Mount the static configuration file
       - ./traefik.yml:/etc/traefik/traefik.yml:ro
     networks:
       - proxy_net
 
 networks:
   proxy_net:
+    # This creates a shared external bridge network on the host. 
+    # Other docker-compose files will declare this as `external: true` to connect.
     name: global_proxy_net
     driver: bridge

@@ -1,4 +1,7 @@
 services:
+  # ==========================================
+  # HERMES CORE (The Brain/Gateway)
+  # ==========================================
   gateway:
     image: nousresearch/hermes-agent:latest
     container_name: hermes
@@ -6,7 +9,9 @@ services:
     ports:
       - "8000:8000"  # API Server (If enabled)
     volumes:
-      - ./data:/opt/data
+      - ./data:/opt/data # Persists the agent's memory, skills, and trajectories
+      # CRITICAL: This allows the agent to spin up secure, ephemeral Docker containers
+      # to execute Python/NodeJS code on the fly without breaking out into the host OS.
       - /var/run/docker.sock:/var/run/docker.sock  # Required if TERMINAL_ENV=docker
     env_file:
       - .env
@@ -15,6 +20,9 @@ services:
       - HERMES_GID=1000
     command: ["gateway", "run"]
 
+  # ==========================================
+  # HERMES WEB UI (The Dashboard)
+  # ==========================================
   dashboard:
     image: nousresearch/hermes-agent:latest
     container_name: hermes-dashboard
