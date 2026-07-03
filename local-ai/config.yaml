@@ -2,7 +2,7 @@ model_list:
   # Map the model requested by the Agent to the actual Ollama model
   - model_name: qwen3-8b
     litellm_params:
-      model: ollama/qwen2.5:8b # (Adjust this tag to match the exact model you pull in Ollama)
+      model: ollama/qwen2.5:7b # (Adjust this tag to match the exact model you pull in Ollama)
       # Route requests using the internal Docker network hostname
       api_base: http://ollama:11434
 
