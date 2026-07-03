@@ -1,0 +1,80 @@
+services:
+  # ==========================================
+  # 1. HARDWARE & RUNTIME (Ollama)
+  # ==========================================
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    restart: unless-stopped
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    networks:
+      - ai-agent-net
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  # ==========================================
+  # 2. API GATEWAY (LiteLLM)
+  # ==========================================
+  litellm:
+    image: ghcr.io/berriai/litellm:main-latest
+    container_name: litellm
+    restart: unless-stopped
+    ports:
+      - "4000:4000"
+    volumes:
+      - ./config.yaml:/app/config.yaml:ro
+    networks:
+      - ai-agent-net
+    command: ["--config", "/app/config.yaml", "--port", "4000"]
+    depends_on:
+      - ollama
+
+  # ==========================================
+  # 3. AUTONOMOUS AGENT (Hermes)
+  # ==========================================
+  hermes:
+    image: nousresearch/hermes-agent:latest
+    container_name: hermes-local-agent
+    restart: unless-stopped
+    ports:
+      - "9119:9119" # Dashboard
+      - "8000:8000" # Gateway API
+    volumes:
+      - hermes_data:/root/.hermes
+      - ./workspace:/workspace
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - ai-agent-net
+    environment:
+      # Route LLM requests to the local LiteLLM gateway
+      - OPENAI_API_BASE=http://litellm:4000/v1
+      - OPENAI_API_KEY=sk-dummy-key
+      - DEFAULT_MODEL=qwen3-8b
+
+      # Model Context Protocol (MCP) Environment Variables
+      - FIGMA_MCP_SERVER_TOKEN=${FIGMA_MCP_SERVER_TOKEN:-}
+      - GOOGLE_STITCH_MCP_API_KEY=${GOOGLE_STITCH_MCP_API_KEY:-}
+
+      # Agent user config
+      - HERMES_UID=1000
+      - HERMES_GID=1000
+      - HERMES_DASHBOARD_BASIC_AUTH_USERNAME=admin
+      - HERMES_DASHBOARD_BASIC_AUTH_PASSWORD=admin
+    depends_on:
+      - litellm
+
+networks:
+  ai-agent-net:
+    driver: bridge
+
+volumes:
+  ollama_data:
+  hermes_data:
