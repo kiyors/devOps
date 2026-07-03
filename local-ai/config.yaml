@@ -11,6 +11,11 @@ model_list:
       model: ollama/glm4
       api_base: http://ollama:11434
 
+  - model_name: hermes3-8b
+    litellm_params:
+      model: ollama/hermes3:8b
+      api_base: http://ollama:11434
+
 litellm_settings:
   set_verbose: false
   drop_params: true # Important for dropping unsupported OpenAI parameters before hitting Ollama
