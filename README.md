@@ -39,20 +39,23 @@ To prevent collisions on your host machine, services are statically mapped to th
 
 ---
 
-## 🛠️ Global Makefile Usage
+## 🛠️ Global Justfile Usage
 
-You can use the root `Makefile` to manage your entire ecosystem without having to `cd` into every directory.
+You can use the root `justfile` and the `just` command runner to manage your entire ecosystem without having to `cd` into every directory.
 
 ```bash
+# See all available commands
+just
+
 # Start a specific stack (e.g., media)
-make up-media
+just up media
 
 # Stop a specific stack
-make down-huly
+just down huly
 
 # Check logs for a stack
-make logs-hermes-agent
+just logs hermes-agent
 
 # Tear down the entire homelab (Use with caution!)
-make down-all
+just down-all
 ```
