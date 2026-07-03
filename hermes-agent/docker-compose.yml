@@ -1,5 +1,24 @@
 services:
   # ==========================================
+  # LOCAL REVERSE PROXY
+  # ==========================================
+  traefik:
+    image: "traefik:v2.10"
+    container_name: "hermes-proxy"
+    restart: unless-stopped
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    networks:
+      - default
+
+  # ==========================================
   # HERMES CORE (The Brain/Gateway)
   # ==========================================
   gateway:
@@ -39,13 +58,9 @@ services:
     command: ["dashboard", "--host", "0.0.0.0", "--no-open"]
     networks:
       - default
-      - proxy_net
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.hermes.rule=Host(`${DASHBOARD_DOMAIN:-hermes.local}`)"
       - "traefik.http.services.hermes.loadbalancer.server.port=9119"
 
-networks:
-  proxy_net:
-    name: global_proxy_net
-    external: true
+# All services use the default docker-compose network.
