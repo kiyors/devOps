@@ -18,6 +18,7 @@ logs:
 restart:
     docker compose restart
 
-# Run the initialization setup
+# Run the initialization setup and start the stack
 setup:
     ./setup.sh
+    just up
