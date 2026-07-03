@@ -57,6 +57,7 @@ services:
     environment:
       - HERMES_DASHBOARD=1
       - HERMES_DASHBOARD_HOST=0.0.0.0
+      - API_SERVER_KEY=hermes-secret
       # Route LLM requests to the local LiteLLM gateway
       - OPENAI_API_BASE=http://litellm:4000/v1
       - OPENAI_API_KEY=sk-dummy-key
