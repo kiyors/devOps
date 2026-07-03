@@ -21,8 +21,6 @@ services:
     restart: unless-stopped
     depends_on:
       - gateway
-    ports:
-      - "9119:9119"  # Dashboard Web UI
     volumes:
       - ./data:/opt/data
     env_file:
@@ -31,3 +29,15 @@ services:
       - HERMES_UID=1000
       - HERMES_GID=1000
     command: ["dashboard", "--host", "0.0.0.0", "--no-open"]
+    networks:
+      - default
+      - proxy_net
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.hermes.rule=Host(`${DASHBOARD_DOMAIN:-hermes.local}`)"
+      - "traefik.http.services.hermes.loadbalancer.server.port=9119"
+
+networks:
+  proxy_net:
+    name: global_proxy_net
+    external: true
