@@ -1,0 +1,19 @@
+# Show available commands
+default:
+    @just --list
+
+# Start the stack
+up:
+    docker compose up -d
+
+# Stop the stack
+down:
+    docker compose down
+
+# Tail logs
+logs:
+    docker compose logs -f
+
+# Restart the stack
+restart:
+    docker compose restart

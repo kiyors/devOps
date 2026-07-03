@@ -1,0 +1,19 @@
+# Show available commands
+default:
+    @just --list
+
+# Start the proxy network and Traefik
+up:
+    docker compose up -d
+
+# Stop the proxy
+down:
+    docker compose down
+
+# Tail logs
+logs:
+    docker compose logs -f
+
+# Restart the proxy
+restart:
+    docker compose restart
