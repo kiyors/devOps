@@ -13,7 +13,7 @@ Each folder contains its own `docker-compose.yml`, `.env.example`, and a `setup.
 | Blueprint | Description | Core Services |
 | :--- | :--- | :--- |
 | **[explorer](./explorer)** | Marketing Agency / Team Storage | Samba, NextExplorer, Authelia (SSO), LLDAP |
-| **[hermes-agent](./hermes-agent)** | Autonomous Self-Improving AI | Hermes Gateway, Hermes Dashboard, OpenRouter |
+| **[hermes](./hermes)** | Autonomous Self-Improving AI | Hermes Gateway, Hermes Dashboard, OpenRouter |
 | **[huly](./huly)** | Open-Source Project Management | Front, CockroachDB, Redpanda, Transactor |
 | **[localstack](./localstack)** | Local AWS Cloud Emulation | S3, IAM, Lambda, API Gateway, EC2 |
 | **[media](./media)** | Automated Media & Streaming Server | Jellyfin, *arr Suite, qBittorrent, Seerr |
