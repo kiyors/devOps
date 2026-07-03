@@ -1,0 +1,74 @@
+# Hermes Agent: Autonomous Self-Improving AI
+
+**Hermes Agent** is an autonomous, self-improving AI agent developed by **Nous Research**. It features a unique learning loop, allowing it to create skills from experience, persist knowledge, search past conversations, and build a persistent model of the user.
+
+---
+
+## 🏗️ Architecture & Strategy: Why These Tools?
+
+This deployment configures the Hermes Agent into an always-on ecosystem capable of integrating with Telegram, Slack, Web, and more.
+
+1.  **Hermes Gateway (The Core):** The main agent runtime that listens for commands, plans execution, handles memory persistence, and interacts with APIs.
+2.  **Hermes Dashboard (The UI):** A graphical web interface for interacting with the agent, monitoring trajectories (thoughts), and managing skills.
+3.  **Docker Backend (The Sandbox):** The agent mounts the host's `docker.sock` allowing it to safely spin up isolated containers to execute Python or Node code on the fly.
+4.  **OpenRouter (The Brain):** Acts as the LLM provider router, allowing Hermes to seamlessly swap between Claude, GPT, Gemini, and open models.
+
+---
+
+## 📁 Directory Structure (The Root-Split)
+
+We map a local volume to keep the agent's memory and skills persistent:
+
+- **`/data`:** Bound to `/opt/data` inside the container. This folder stores:
+  - SQLite databases for memory and conversation history.
+  - Automatically learned skills and Python scripts.
+  - Downloaded files and agent configuration (`config.yaml`).
+
+---
+
+## 🚀 Technical Implementation Guide (IT Runbook)
+
+### Phase 1: Authentication & LLM Keys
+
+Hermes Agent requires an LLM provider to function. By default, it relies on OpenRouter.
+
+1.  Copy the environment file:
+    ```bash
+    cp .env.example .env
+    ```
+2.  Add your **OpenRouter API Key** to `.env` (Get one at [openrouter.ai](https://openrouter.ai)).
+3.  *(Optional)* Add API keys for Web Search (Exa), Image Generation (FAL), or messaging integrations (Slack/Telegram).
+
+### Phase 2: Deploying the Agent
+
+Boot the agent core and the web dashboard. Ensure the host allows port `9119` if you are accessing it remotely.
+
+```bash
+docker compose up -d
+```
+
+> **Note:** The compose file explicitly binds `/var/run/docker.sock`. This allows the agent to create temporary secure containers for code execution (`TERMINAL_ENV=docker`).
+
+### Phase 3: Accessing the Dashboard
+
+Once the containers are running, navigate to the Dashboard in your browser:
+**http://<YOUR_IP>:9119**
+
+From the dashboard, you can chat with the agent, watch its reasoning loop, and review its memory retention.
+
+---
+
+## 🛠️ Maintenance & High Availability
+
+- **Skill Evolution:** The agent writes and saves skills in the `./data/skills` directory. If it writes a broken skill, you can manually delete the Python file from this folder.
+- **Context Compression:** The agent automatically compresses long conversations using summarizing LLM calls to prevent context window exhaustion.
+- **Log Management:** Trajectories are heavily logged. You can review them via the Dashboard or natively in the `./data/logs` folder.
+
+---
+
+## 🔗 Connection Summary
+
+| Service               | Internal Port | External Visibility                        |
+| :-------------------- | :------------ | :----------------------------------------- |
+| **Dashboard (Web UI)**| `9119`        | Public (`http://${SERVER_IP}:9119`)        |
+| **Gateway API**       | `8000`        | Public (`http://${SERVER_IP}:8000`)        |
