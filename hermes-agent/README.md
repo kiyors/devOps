@@ -41,20 +41,40 @@ Hermes Agent requires an LLM provider to function. By default, it relies on Open
 
 ### Phase 2: Deploying the Agent
 
-Boot the agent core and the web dashboard. Ensure the host allows port `9119` if you are accessing it remotely.
+Boot the agent core, the web dashboard, and the embedded Traefik proxy.
 
 ```bash
-docker compose up -d
+just up
 ```
 
-> **Note:** The compose file explicitly binds `/var/run/docker.sock`. This allows the agent to create temporary secure containers for code execution (`TERMINAL_ENV=docker`).
+> **Note:** The compose file explicitly binds `/var/run/docker.sock`. This allows the agent to create temporary secure containers for code execution (`TERMINAL_ENV=docker`), and allows Traefik to discover the containers.
 
-### Phase 3: Accessing the Dashboard
+### Phase 3: Accessing the Dashboard Locally
 
-Once the containers are running, navigate to the Dashboard in your browser:
-**http://<YOUR_IP>:9119**
+Because this stack uses Traefik for reverse proxy routing, the dashboard is not mapped to a direct IP/port. Instead, it expects traffic directed to `hermes.local`.
 
-From the dashboard, you can chat with the agent, watch its reasoning loop, and review its memory retention.
+Since you are running this locally, you must tell your machine how to resolve this domain. You have three options:
+
+**Option A: The `.localhost` Trick (Zero Config, Browser Only)**
+Modify your `.env` file to use a `.localhost` domain before deploying. Modern web browsers automatically resolve anything ending in `.localhost` to `127.0.0.1`.
+```env
+DASHBOARD_DOMAIN=hermes.localhost
+```
+Then visit: **http://hermes.localhost**
+
+**Option B: Edit Your Hosts File (System-Wide)**
+If you want to stick with `hermes.local`, add it to your machine's hosts file.
+On macOS/Linux, run: `sudo nano /etc/hosts` and add:
+```
+127.0.0.1    hermes.local
+```
+Then visit: **http://hermes.local**
+
+**Option C: CLI Testing**
+If you are testing the endpoints via terminal (like `curl`) without altering system DNS, you can pass the Host header manually:
+```bash
+curl -H "Host: hermes.local" http://localhost
+```
 
 ---
 
@@ -68,7 +88,8 @@ From the dashboard, you can chat with the agent, watch its reasoning loop, and r
 
 ## 🔗 Connection Summary
 
-| Service               | Internal Port | External Visibility                        |
-| :-------------------- | :------------ | :----------------------------------------- |
-| **Dashboard (Web UI)**| `9119`        | Public (`http://${SERVER_IP}:9119`)        |
-| **Gateway API**       | `8000`        | Public (`http://${SERVER_IP}:8000`)        |
+| Service               | External Route / Domain                    | Protocol |
+| :-------------------- | :----------------------------------------- | :------- |
+| **Traefik Proxy**     | `http://localhost:80`                      | HTTP     |
+| **Dashboard (Web UI)**| `http://hermes.local` (via Traefik)        | HTTP     |
+| **Gateway API**       | *Internal Only* (No exposed port)          | HTTP     |
