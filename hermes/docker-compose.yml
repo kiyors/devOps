@@ -28,7 +28,7 @@ services:
     ports:
       - "8000:8000"  # API Server (If enabled)
     volumes:
-      - ./data:/opt/data # Persists the agent's memory, skills, and trajectories
+      - ./data:/root/.hermes # Persists the agent's memory, skills, and config
       # CRITICAL: This allows the agent to spin up secure, ephemeral Docker containers
       # to execute Python/NodeJS code on the fly without breaking out into the host OS.
       - /var/run/docker.sock:/var/run/docker.sock  # Required if TERMINAL_ENV=docker
@@ -49,7 +49,7 @@ services:
     depends_on:
       - gateway
     volumes:
-      - ./data:/opt/data
+      - ./data:/root/.hermes
     env_file:
       - .env
     environment:
