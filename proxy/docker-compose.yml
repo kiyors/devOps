@@ -1,0 +1,21 @@
+services:
+  traefik:
+    image: traefik:v2.10
+    container_name: global-proxy
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    ports:
+      - "80:80"     # HTTP
+      - "443:443"   # HTTPS
+      - "8080:8080" # Traefik Dashboard (Optional/Dev only)
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik.yml:/etc/traefik/traefik.yml:ro
+    networks:
+      - proxy_net
+
+networks:
+  proxy_net:
+    name: global_proxy_net
+    driver: bridge
