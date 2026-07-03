@@ -28,16 +28,28 @@ We map a local volume to keep the agent's memory and skills persistent:
 
 ## 🚀 Technical Implementation Guide (IT Runbook)
 
-### Phase 1: Authentication & LLM Keys
+### Phase 1: Download & Setup
 
-Hermes Agent requires an LLM provider to function. By default, it relies on OpenRouter.
+If you are deploying this on a new server and **only** want to download this specific stack (without cloning your entire devOps repository), you can use `svn` (easiest) or `git sparse-checkout`.
 
-1.  Copy the environment file:
-    ```bash
-    cp .env.example .env
-    ```
-2.  Add your **OpenRouter API Key** to `.env` (Get one at [openrouter.ai](https://openrouter.ai)).
-3.  *(Optional)* Add API keys for Web Search (Exa), Image Generation (FAL), or messaging integrations (Slack/Telegram).
+**Option A: SVN (Cleanest)**
+```bash
+svn export https://github.com/YOUR_GITHUB_USERNAME/devOps/trunk/hermes
+cd hermes
+just setup
+```
+
+**Option B: Git Sparse Checkout (If SVN isn't installed)**
+```bash
+git clone --depth 1 --filter=blob:none --sparse https://github.com/YOUR_GITHUB_USERNAME/devOps.git
+cd devOps
+git sparse-checkout set hermes
+cd hermes
+just setup
+```
+
+*Note: The `just setup` command will interactively ask for your API keys and automatically configure your `.env` file!*
+
 
 ### Phase 2: Deploying the Agent
 
