@@ -44,6 +44,7 @@ services:
     image: nousresearch/hermes-agent:latest
     container_name: hermes-local-agent
     restart: unless-stopped
+    command: ["gateway", "run"]
     ports:
       - "9119:9119" # Dashboard
       - "8000:8000" # Gateway API
@@ -54,6 +55,8 @@ services:
     networks:
       - ai-agent-net
     environment:
+      - HERMES_DASHBOARD=1
+      - HERMES_DASHBOARD_HOST=0.0.0.0
       # Route LLM requests to the local LiteLLM gateway
       - OPENAI_API_BASE=http://litellm:4000/v1
       - OPENAI_API_KEY=sk-dummy-key
