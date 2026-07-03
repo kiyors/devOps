@@ -30,21 +30,18 @@ We map a local volume to keep the agent's memory and skills persistent:
 
 ### Phase 1: Download & Setup
 
-If you are deploying this on a new server and **only** want to download this specific stack (without cloning your entire devOps repository), you can use `svn` (easiest) or `git sparse-checkout`.
+If you are deploying this on a new server and **only** want this specific stack, you can download just the folder without keeping the entire git repository attached:
 
-**Option A: SVN (Cleanest)**
 ```bash
-svn export https://github.com/YOUR_GITHUB_USERNAME/devOps/trunk/hermes
-cd hermes
-just setup
-```
+# 1. Quickly clone the repository (shallow clone)
+git clone --depth 1 https://github.com/kiyors/devOps.git
 
-**Option B: Git Sparse Checkout (If SVN isn't installed)**
-```bash
-git clone --depth 1 --filter=blob:none --sparse https://github.com/YOUR_GITHUB_USERNAME/devOps.git
-cd devOps
-git sparse-checkout set hermes
+# 2. Move the hermes folder out and delete the rest
+mv devOps/hermes .
+rm -rf devOps
 cd hermes
+
+# 3. Run the interactive setup!
 just setup
 ```
 
