@@ -18,4 +18,4 @@ model_list:
 
 litellm_settings:
   set_verbose: false
-  drop_params: true # Important for dropping unsupported OpenAI parameters before hitting Ollama
+  drop_params: false
